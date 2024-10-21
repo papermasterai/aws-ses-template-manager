@@ -16,7 +16,7 @@ $(document).ready(() => {
 
       //Build table
       let tableContent = ``;
-      for (let template of result) {
+      for (const [index, template] of result.entries()) {
 
         // change the UTC 'created timestamp' string for better readability
         const createdDate = template.CreatedTimestamp.slice(0, 10);
@@ -25,6 +25,7 @@ $(document).ready(() => {
 
         tableContent += `
             <tr>
+              <td scope="row">${index + 1}</td>
               <td scope="row">${template.Name}</td>
               <td>${dateTimeString}</td>
               <td class="text-right">
