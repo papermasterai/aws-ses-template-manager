@@ -1,7 +1,9 @@
 $(document).ready(() => {
-  var getTemplates = function (val) {
-    $.get(`/list-templates?region=${localStorage.getItem('region')}`, function (data) {
+
+  var getTemplates = function (nextToken, num = 0) {
+    $.get(`/list-templates?region=${localStorage.getItem('region')}${nextToken ? `&NextToken=${encodeURIComponent(nextToken)}` : ''}`, function (data) {
       const templatesArr = data.items.TemplatesMetadata;
+      const next = data.items.NextToken;
       const type = localStorage.getItem('type') || 'all';
       const result = templatesArr.filter((item) => {
         if (type === 'all') return true;
@@ -9,7 +11,7 @@ $(document).ready(() => {
         return item.Name.startsWith(type)
       })
 
-      if (result.length === 0) {
+      if (result.length === 0 && !nextToken) {
         $('#noTemplatesPlaceholder').fadeIn();
         return; //no need to continue
       }
@@ -22,10 +24,11 @@ $(document).ready(() => {
         const createdDate = template.CreatedTimestamp.slice(0, 10);
         const createdTime = template.CreatedTimestamp.slice(11, 19);
         const dateTimeString = `${createdDate} ${createdTime}`;
+        num++;
 
         tableContent += `
             <tr>
-              <td scope="row">${index + 1}</td>
+              <td scope="row">${num}</td>
               <td scope="row">${template.Name}</td>
               <td>${dateTimeString}</td>
               <td class="text-right">
@@ -67,11 +70,18 @@ $(document).ready(() => {
             </tr>`;
       }
 
-      $('#templateListTable tbody').html(tableContent);
+      if (nextToken) {
+        $('#templateListTable tbody').append(tableContent)
+      } else {
+        $('#templateListTable tbody').html(tableContent);
+      };
+      if (next) {
+        getTemplates(next, num);
+      }
       $('#templateListTable').show();
       $('[data-toggle="tooltip"]').tooltip();
     }).fail(function (response) {
-      $('#credentialsErrorModal .modal-body').append(`<p><strong>${response.responseJSON.code}</strong> <br> ${response.responseJSON.message} </p>`);
+      $('#credentialsErrorModal .modal-body').append(`< p ><strong>${response.responseJSON.code}</strong> <br> ${response.responseJSON.message} </p>`);
       $('#credentialsErrorModal').modal();
     });
   }
@@ -103,7 +113,7 @@ $(document).ready(() => {
 function deleteTemplate(templateName) {
   //Upon modal confirmation, make the delete template API call
   $.ajax({
-    url: `/delete-template/${templateName}?region=${localStorage.getItem('region')}`,
+    url: `/ delete -template / ${templateName}?region = ${localStorage.getItem('region')} `,
     type: 'DELETE',
     success: function (result) {
       // Do something with the result
@@ -123,26 +133,26 @@ function triggerSendTestEmailModal(templateName) {
   $('#sendTestEmailModal #errorOutput').addClass('d-none'); // reset modal to initial state
   $('#sendTestEmailModal #confirmationText').hide();  // reset modal to initial state
 
-  $.get(`/get-template/${templateName}?region=${localStorage.getItem('region')}`, function (response) { // get the templates to display dynamic fields
+  $.get(`/ get - template / ${templateName}?region = ${localStorage.getItem('region')} `, function (response) { // get the templates to display dynamic fields
     const dynamicFieldsArr = response.data.dynamicFields;
     if (dynamicFieldsArr.length > 0) {
-      $('#sendTestEmailModal #dynamicFieldsContainer').append(` 
-        <div class="my-3">
+      $('#sendTestEmailModal #dynamicFieldsContainer').append(`
+    < div class="my-3" >
           <p class="m-0">Template replacement tags</p>
           <small>Specify any of your ${dynamicFieldsArr.length} implemented replacement tag values here:</small>
-        </div>
-      `);
+        </div >
+    `);
 
       for (const dynamicFieldItem of dynamicFieldsArr) {
         // per each replacement tag, show an input row
         $('#sendTestEmailModal #dynamicFieldsContainer').append(`
-          <div class="form-group row">
+    < div class="form-group row" >
             <label class="col-sm-3 col-form-label">${dynamicFieldItem}</label>
             <div class="col-sm-9">
               <input type="text" class="form-control dynamicField" name="${dynamicFieldItem}" placeholder="value">
             </div>
-          </div>
-        `);
+          </div >
+    `);
       }
     } else {
       $('#sendTestEmailModal #dynamicFieldsContainer').html('<div class="text-center text-muted">No replacement tag fields to display</div>');
@@ -176,7 +186,7 @@ function sendEmailSubmission(e, form) {
     });
   }
 
-  $.post(`/send-template`, { templateName, source, templateData: JSON.stringify(dynamicFieldPayload), toAddress, region: localStorage.getItem('region') }, (response) => {
+  $.post(`/ send - template`, { templateName, source, templateData: JSON.stringify(dynamicFieldPayload), toAddress, region: localStorage.getItem('region') }, (response) => {
     // show confirmation content
     $('#sendTestEmailModal #errorOutput').addClass('d-none');
     $('#sendTestEmailModal #confirmationText #sentTime').html(new Date());
@@ -214,5 +224,5 @@ function triggerDuplicateAsModal(existingTemplateName) {
 function duplicateCtaAction(existingTemplateName) {
   // we need to build the link and redirect to the create template page
   const newTemplateName = $('#newTemplateName').val();
-  window.location.href = `/create-template?d-origin=${existingTemplateName}&d-name=${newTemplateName}`;
+  window.location.href = `/ create - template ? d - origin=${existingTemplateName}& d - name=${newTemplateName} `;
 }
