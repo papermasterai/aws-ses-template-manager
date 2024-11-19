@@ -113,7 +113,7 @@ $(document).ready(() => {
 function deleteTemplate(templateName) {
   //Upon modal confirmation, make the delete template API call
   $.ajax({
-    url: `/ delete -template / ${templateName}?region = ${localStorage.getItem('region')} `,
+    url: `/delete-template/${templateName}?region=${localStorage.getItem('region')}`,
     type: 'DELETE',
     success: function (result) {
       // Do something with the result
@@ -133,7 +133,7 @@ function triggerSendTestEmailModal(templateName) {
   $('#sendTestEmailModal #errorOutput').addClass('d-none'); // reset modal to initial state
   $('#sendTestEmailModal #confirmationText').hide();  // reset modal to initial state
 
-  $.get(`/ get - template / ${templateName}?region = ${localStorage.getItem('region')} `, function (response) { // get the templates to display dynamic fields
+  $.get(`/get-template/${templateName}?region=${localStorage.getItem('region')}`, function (response) { // get the templates to display dynamic fields
     const dynamicFieldsArr = response.data.dynamicFields;
     if (dynamicFieldsArr.length > 0) {
       $('#sendTestEmailModal #dynamicFieldsContainer').append(`
@@ -186,7 +186,7 @@ function sendEmailSubmission(e, form) {
     });
   }
 
-  $.post(`/ send - template`, { templateName, source, templateData: JSON.stringify(dynamicFieldPayload), toAddress, region: localStorage.getItem('region') }, (response) => {
+  $.post(`/send-template`, { templateName, source, templateData: JSON.stringify(dynamicFieldPayload), toAddress, region: localStorage.getItem('region') }, (response) => {
     // show confirmation content
     $('#sendTestEmailModal #errorOutput').addClass('d-none');
     $('#sendTestEmailModal #confirmationText #sentTime').html(new Date());

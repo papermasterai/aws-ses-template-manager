@@ -32,3 +32,7 @@
 .col-form-label {
   overflow-wrap: break-word;
 }
+
+.editor-container_classic-editor .editor-container__editor .ck-editor__main .ck-editor__editable{
+	min-height: 300px;
+}

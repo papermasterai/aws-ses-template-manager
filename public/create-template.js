@@ -4,11 +4,20 @@ $(document).ready(function(){
   const urlParams = new URLSearchParams(window.location.search);
   window.history.replaceState({}, document.title, "/create-template");  // clean the url search params from the URL
 
-  window.codeMirrorEditor = window.CodeMirror.fromTextArea(document.querySelector('#codeMirror'), {
-    mode: "htmlmixed",
-    lineNumbers: true,
-    viewportMargin: Infinity
+  // window.codeMirrorEditor = window.CodeMirror.fromTextArea(document.querySelector('#codeMirror'), {
+  //   mode: "htmlmixed",
+  //   lineNumbers: true,
+  //   viewportMargin: Infinity
+  // });
+
+  ClassicEditor.create(document.querySelector('#editor'), CKEditorConfig).then(editor => {
+    window.ckEditor = editor
+    if(window.defaultTemplateData)window.ckEditor.setData(window.defaultTemplateData);
+    editor.model.document.on('change:data', () => {
+      $('#createTemplateForm button').attr('disabled', false)
+    });
   });
+
 
   if (urlParams.has('d-origin')) {
     // we need to load the existing template from which we will duplicate
@@ -16,7 +25,8 @@ $(document).ready(function(){
       $('#templateName').val(urlParams.get('d-name'));
       $('#templateSubject').val(response.data.SubjectPart);
       $('#templateText').val(response.data.TextPart);
-      window.codeMirrorEditor.setValue(response.data.HtmlPart ? response.data.HtmlPart : "");
+      // window.codeMirrorEditor.setValue(response.data.HtmlPart ? response.data.HtmlPart : "");
+      if(window.ckEditor.setData)window.ckEditor.setData(response.data.HtmlPart ? response.data.HtmlPart : "")
       $('#saveTemplateCta').removeAttr('disabled');  // enable the save button
     });
   }
@@ -24,21 +34,20 @@ $(document).ready(function(){
   $('#alwaysFullyRenderCodeEditor').on('change', (e) => {
     const newValue = e.target.checked;
     const newViewportMargin = newValue ? Infinity : window.CodeMirror.defaults.viewportMargin;
-    window.codeMirrorEditor.setOption('viewportMargin', newViewportMargin);
+    // window.codeMirrorEditor.setOption('viewportMargin', newViewportMargin);
   });
 
   const isCodeMirrorEvent = (e) => (e.target === window.codeMirrorEditor.getInputField());
 
   // observe any changes to the form. If so, then enable the create btn
   $('#createTemplateForm').on('input', (e) => {
-    if (isCodeMirrorEvent(e)) return;
+    // if (isCodeMirrorEvent(e)) return;
     const isEditorConfig = e.target.getAttribute('data-editor-config') === 'true';
     if (isEditorConfig) return;
     $('#createTemplateForm button').attr('disabled', false);
   });
 
   // We may not get an input event on deletion from the codeMirror editor
-  window.codeMirrorEditor.on('change', () => $('#createTemplateForm button').attr('disabled', false));
 
   const setTemplatePreview = () => {
     const templateHtml = window.codeMirrorEditor.getValue();
@@ -53,11 +62,11 @@ $(document).ready(function(){
 
   // We may not get an input event on deletion from the codeMirror editor
   $('#createTemplateForm').on('input', (e) => {
-    if (isCodeMirrorEvent(e)) return;
-    handlePreview();
+    // if (isCodeMirrorEvent(e)) return;
+    // handlePreview();
   });
 
-  window.codeMirrorEditor.on('change', handlePreview);
+  // window.codeMirrorEditor.on('change', handlePreview);
 
   $('#showPreview').on('change', (e) => {
     const newValue = e.target.checked;
@@ -73,7 +82,7 @@ $(document).ready(function(){
 
     const createPayload = {
       "TemplateName": $('#templateName').val(),
-      "HtmlPart": window.codeMirrorEditor.getValue(),
+      "HtmlPart": window.ckEditor.getData()+CK_IMAGE_STYLE_STRING,
       "SubjectPart": $('#templateSubject').val(),
       "TextPart": $('#templateText').val(),
       "region": localStorage.getItem('region')

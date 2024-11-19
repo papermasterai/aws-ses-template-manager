@@ -92,6 +92,7 @@ class SesTemplateController {
 
     await new Promise((resolve, reject) => {
       ses.getTemplate(params, function (err, data) {
+        console.log('err', err);
         if (err) {
           reject(err);
         } else {
