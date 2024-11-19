@@ -17,7 +17,7 @@ RUN npm install -g @adonisjs/cli
 COPY . .
 
 # 创建 .env 文件
-RUN cp .env .env
+# RUN cp .env .env
 
 # 暴露端口 (默认 3333)
 EXPOSE 3333
