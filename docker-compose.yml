@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:3333"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - HOST=0.0.0.0
+      - PORT=3333
+      - APP_NAME=${APP_NAME}
+      - APP_URL=${APP_URL}
+      - APP_KEY=${APP_KEY}
+      - CACHE_VIEWS=${CACHE_VIEWS}
+      - HASH_DRIVER=${HASH_DRIVER}
+      - THROTTLE_DRIVER=${THROTTLE_DRIVER}
+      - AWS_PROFILE_NAME=${AWS_PROFILE_NAME}
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped
