@@ -267,6 +267,20 @@ const CKEditorConfig = {
 	table: {
 		contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
 	},
+	fontSize: {
+		options: [
+				8,
+				10,
+				12,
+				14,
+				16,
+				18,
+				22,
+				24,
+		],
+		supportAllValues: true // 允许使用自定义值
+},
+
 	translations: [CKEDITOR_TRANSLATIONS]
 };
 
