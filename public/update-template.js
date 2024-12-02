@@ -15,7 +15,7 @@ $(document).ready(() => {
 
   ClassicEditor.create(document.querySelector('#editor'), CKEditorConfig).then(editor => {
     window.ckEditor = editor
-    if(window.defaultTemplateData)window.ckEditor.setData(window.defaultTemplateData.replace(CK_IMAGE_STYLE_STRING,''));
+    if(window.defaultTemplateData)window.ckEditor.setData(window.defaultTemplateData.replace(CK_IMAGE_STYLE_STRING,'').replace(CK_LINE_HEIGHT_STYLE_STRING,''));
     window.ckEditor.model.document.on('change:data', (cm, change) => {
       if (!cmInitialized) return;
       $('#updateTemplateForm button').attr('disabled', false)
@@ -35,7 +35,7 @@ $(document).ready(() => {
 
     window.defaultTemplateData = response.data.HtmlPart ? response.data.HtmlPart : ""
     // window.codeMirrorEditor.setValue(response.data.HtmlPart ? response.data.HtmlPart : "");
-    if(window.ckEditor.setData)window.ckEditor.setData(window.defaultTemplateData.replace(CK_IMAGE_STYLE_STRING,''))
+    if(window.ckEditor.setData)window.ckEditor.setData(window.defaultTemplateData.replace(CK_IMAGE_STYLE_STRING,'').replace(CK_LINE_HEIGHT_STYLE_STRING,''))
 
     cmInitialized = true;
 
@@ -88,7 +88,7 @@ $(document).ready(() => {
     e.preventDefault();
     const putPayload = {
       "TemplateName": $('#templateName').val(),
-      "HtmlPart": window.ckEditor.getData()+CK_IMAGE_STYLE_STRING,
+      "HtmlPart": window.ckEditor.getData()+CK_IMAGE_STYLE_STRING+CK_LINE_HEIGHT_STYLE_STRING,
       "SubjectPart": $('#templateSubject').val(),
       "TextPart": $('#templateText').val(),
       "region": localStorage.getItem('region')

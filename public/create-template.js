@@ -82,7 +82,7 @@ $(document).ready(function(){
 
     const createPayload = {
       "TemplateName": $('#templateName').val(),
-      "HtmlPart": window.ckEditor.getData()+CK_IMAGE_STYLE_STRING,
+      "HtmlPart": window.ckEditor.getData()+CK_IMAGE_STYLE_STRING+CK_LINE_HEIGHT_STYLE_STRING,
       "SubjectPart": $('#templateSubject').val(),
       "TextPart": $('#templateText').val(),
       "region": localStorage.getItem('region')
