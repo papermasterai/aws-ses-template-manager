@@ -10,7 +10,7 @@ function populateTextSectionContent() {
 }
 
 (async function () {
-  window.CK_IMAGE_STYLE_STRING = '<style>img {max-width: 100%;height: auto;}</style>'
+  window.CK_IMAGE_STYLE_STRING = '<style>img {max-width: 100%;height: auto;} p{line-height: 1.6;}</style>'
   const versionChecked = sessionStorage.getItem('versionChecked');
   if (!versionChecked) {
     await $.get(`https://api.github.com/repos/MattRuddick/aws-ses-template-manager/tags`, (response) => {
