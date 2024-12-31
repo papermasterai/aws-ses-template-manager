@@ -44,7 +44,8 @@ const {
 	TextTransformation,
 	TodoList,
 	Underline,
-	Undo
+	Undo,
+	SourceEditing,
 } = CKEDITOR;
 
 
@@ -54,6 +55,7 @@ const CKEditorConfig = {
 			'undo',
 			'redo',
 			'|',
+			'sourceEditing','|',
 			'findAndReplace',
 			'|',
 			'heading',
@@ -84,6 +86,7 @@ const CKEditorConfig = {
 	plugins: [
 		AccessibilityHelp,
 		Autoformat,
+		SourceEditing,
 		Alignment,
 		AutoImage,
 		Autosave,
